@@ -1,0 +1,32 @@
+services:
+  steplogweb:
+    build:
+      context: .
+      dockerfile: ./services/DockerfileWeb
+    container_name: steplogweb
+    networks:
+      - my-network
+    depends_on:
+      - steplogdb
+    ports:
+      - "80:80"
+    volumes:
+      - ./application:/var/www/html/
+  steplogdb:
+    build:
+      context: .
+      dockerfile: ./services/DockerfileDB
+    networks:
+      - my-network
+    container_name: steplogdb
+    ports:
+      - "3307:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: passwd
+      MYSQL_DATABASE: steplog
+      MYSQL_USER: user
+      MYSQL_PASSWORD: passwd
+    volumes:
+      - ./db:/var/lib/mysql
+networks:
+  my-network:
