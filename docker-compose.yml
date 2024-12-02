@@ -3,6 +3,8 @@ services:
     build:
       context: .
       dockerfile: ./services/DockerfileWeb
+      args:
+        PHP_ENV: ${PHP_ENV}
     container_name: steplogweb
     networks:
       - my-network
@@ -22,10 +24,10 @@ services:
     ports:
       - "3307:3306"
     environment:
-      MYSQL_ROOT_PASSWORD: passwd
-      MYSQL_DATABASE: steplog
-      MYSQL_USER: user
-      MYSQL_PASSWORD: passwd
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
     volumes:
       - ./db:/var/lib/mysql
 networks:

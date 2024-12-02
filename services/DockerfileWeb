@@ -5,7 +5,13 @@ RUN apt update && apt upgrade -y && apt install -y nano tzdata git curl
 ENV TZ=America/Sao_Paulo
 RUN ln -sf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
+ARG PHP_ENV=production
 
+RUN if [ "$PHP_ENV" = "production" ]; then \
+        cp /usr/local/etc/php/php.ini-production /usr/local/etc/php/php.ini; \
+    else \
+        cp /usr/local/etc/php/php.ini-development /usr/local/etc/php/php.ini; \
+    fi
 
 
 CMD ["apachectl", "-D", "FOREGROUND"]
