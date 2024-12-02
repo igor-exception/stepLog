@@ -14,5 +14,6 @@ RUN if [ "$PHP_ENV" = "production" ]; then \
         cp /usr/local/etc/php/php.ini-development /usr/local/etc/php/php.ini; \
     fi
 
+RUN sed -i 's|;date.timezone =|date.timezone = America/Sao_Paulo|' /usr/local/etc/php/php.ini
 
 CMD ["apachectl", "-D", "FOREGROUND"]
