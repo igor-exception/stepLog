@@ -2,7 +2,7 @@ FROM php:8.2-apache
 
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-RUN apt update && apt upgrade -y && apt install -y nano tzdata git curl \
+RUN apt update && apt upgrade -y && apt install -y nano zip tzdata git curl \
     && pecl install xdebug && docker-php-ext-enable xdebug \
     && docker-php-ext-install pdo pdo_mysql
 
@@ -21,5 +21,13 @@ RUN if [ "$PHP_ENV" = "production" ]; then \
 
 RUN sed -i 's|;date.timezone =|date.timezone = America/Sao_Paulo|' /usr/local/etc/php/php.ini
 
+RUN ls -l /
+
+COPY ./init/entrypoint.sh /tmp/entrypoint.sh
+COPY ./init/start_composer.sh /tmp/start_composer.sh
+
+RUN chmod +x /tmp/entrypoint.sh /tmp/start_composer.sh
+
+ENTRYPOINT ["/tmp/entrypoint.sh"]
 
 CMD ["apachectl", "-D", "FOREGROUND"]

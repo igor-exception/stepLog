@@ -1,2 +1,6 @@
 db/
 .env
+application/coverage/
+application/vendor/
+application/.phpunit.cache/
+application/src/vendor/
