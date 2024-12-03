@@ -1,6 +1,10 @@
 FROM php:8.2-apache
 
-RUN apt update && apt upgrade -y && apt install -y nano tzdata git curl
+COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+
+RUN apt update && apt upgrade -y && apt install -y nano tzdata git curl \
+    && pecl install xdebug && docker-php-ext-enable xdebug \
+    && docker-php-ext-install pdo pdo_mysql
 
 ENV TZ=America/Sao_Paulo
 RUN ln -sf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
@@ -12,8 +16,10 @@ RUN if [ "$PHP_ENV" = "production" ]; then \
         cp /usr/local/etc/php/php.ini-production /usr/local/etc/php/php.ini; \
     else \
         cp /usr/local/etc/php/php.ini-development /usr/local/etc/php/php.ini; \
+        echo "xdebug.mode=coverage,develop" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini; \
     fi
 
 RUN sed -i 's|;date.timezone =|date.timezone = America/Sao_Paulo|' /usr/local/etc/php/php.ini
+
 
 CMD ["apachectl", "-D", "FOREGROUND"]
