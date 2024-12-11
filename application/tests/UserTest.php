@@ -14,6 +14,9 @@ class UserTest extends TestCase
 
         $user = new User($name, $email, $birth, $password, $password_confirmation);
         $this->assertEquals($name, $user->getName());
+        $this->assertEquals($email, $user->getEmail());
+        $this->assertEquals($birth, $user->getBirth());
+        $this->assertNotEquals($password, $user->getPassword());
     }
 
     public function testCreateUserWithInvalidName()
