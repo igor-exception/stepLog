@@ -28,7 +28,7 @@ class UserTest extends TestCase
         $password_confirmation = '123a456b';
 
         
-        $this->expectException(\Exception::class);
+        $this->expectException(\DomainException::class);
         $this->expectExceptionMessage('Nome deve ser entre 4 e 150 caracteres');
         $user = new User($name, $email, $birth, $password, $password_confirmation);
     }
@@ -42,7 +42,7 @@ class UserTest extends TestCase
         $password_confirmation = '123a456b';
 
         
-        $this->expectException(\Exception::class);
+        $this->expectException(\DomainException::class);
         $this->expectExceptionMessage('Nome deve ser entre 4 e 150 caracteres');
         $user = new User($name, $email, $birth, $password, $password_confirmation);
     }
@@ -56,7 +56,7 @@ class UserTest extends TestCase
         $password_confirmation = '123a456b';
 
         
-        $this->expectException(\Exception::class);
+        $this->expectException(\DomainException::class);
         $this->expectExceptionMessage('Email inválido');
         $user = new User($name, $email, $birth, $password, $password_confirmation);
     }
@@ -70,22 +70,8 @@ class UserTest extends TestCase
         $password_confirmation = '123a456b';
 
         
-        $this->expectException(\Exception::class);
+        $this->expectException(\DomainException::class);
         $this->expectExceptionMessage('Data de nascimento inválida');
-        $user = new User($name, $email, $birth, $password, $password_confirmation);
-    }
-
-    public function testCreateUserWithInvalidMissMatchingPassword()
-    {
-        $name = 'John Doe';
-        $email = 'john@gmail.com';
-        $birth = '1990-04-03';
-        $password = '123a456b';
-        $password_confirmation = '123456';
-
-        
-        $this->expectException(\Exception::class);
-        $this->expectExceptionMessage('Senha e confirmação de senha não são a mesma');
         $user = new User($name, $email, $birth, $password, $password_confirmation);
     }
 
@@ -98,8 +84,8 @@ class UserTest extends TestCase
         $password_confirmation = '123';
 
         
-        $this->expectException(\Exception::class);
-        $this->expectExceptionMessage('Senha precisa ser maior que 5 caracteres');
+        $this->expectException(\DomainException::class);
+        $this->expectExceptionMessage('Senha precisa ser maior ou igual a 8 caracteres');
         $user = new User($name, $email, $birth, $password, $password_confirmation);
     }
 }

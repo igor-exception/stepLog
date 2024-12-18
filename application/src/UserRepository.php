@@ -3,6 +3,7 @@ namespace APP;
 
 use APP\UserRepositoryInterface;
 use APP\User;
+use APP\Exceptions\RepositoryException;
 
 class UserRepository implements UserRepositoryInterface
 {
@@ -12,29 +13,25 @@ class UserRepository implements UserRepositoryInterface
         $this->pdo = $pdo;
     }
 
-    public function save(User $user): bool
+    public function save(User $user): int
     {
-        $name = $user->getName();
-        $email = $user->getEmail();
-        $birth = $user->getBirth();
-        $password = $user->getPassword();
+        try {
+            $name = $user->getName();
+            $email = $user->getEmail();
+            $birth = $user->getBirth();
+            $password = $user->getPassword();
 
-        /*
-            1- criar query para insercao
-            2- 
-        */
-
-        $stmt = $this->pdo->prepare("INSERT INTO users(name, email, birth, password) VALUES (:name, :email, :birth, :password);");
-        $stmt->execute([
-            'name' => $name,
-            'email' => $email,
-            'birth' => $birth,
-            'password' => $password
-        ]);
-
-        if($stmt->rowCount() <= 0){
-            return false;
+            $stmt = $this->pdo->prepare("INSERT INTO users(name, email, birth, password) VALUES (:name, :email, :birth, :password);");
+            $stmt->execute([
+                'name' => $name,
+                'email' => $email,
+                'birth' => $birth,
+                'password' => $password
+            ]);
+    
+            return $this->pdo->lastInsertId();
+        }catch(PDOException $e) {
+            throw new RepositoryException("Erro no banco: " . $e->getMessage(), 0, $e);
         }
-        return true;
     }
 }

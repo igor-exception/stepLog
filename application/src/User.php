@@ -8,19 +8,19 @@ class User
     private $birth;
     private $password;
     
-    public function __construct($name, $email, $birth, $password, $password_confirmation)
+    public function __construct($name, $email, $birth, $password)
     {
         $this->setName($name);
         $this->setEmail($email);
         $this->setBirth($birth);
-        $this->setPassword($password, $password_confirmation);
+        $this->setPassword($password);
     }
 
     private function setName($name)
     {
         $name = trim(preg_replace('/\s+/', ' ',$name));
         if(strlen($name) <= 3 || strlen($name) > 150) {
-            throw new \Exception('Nome deve ser entre 4 e 150 caracteres');
+            throw new \DomainException('Nome deve ser entre 4 e 150 caracteres');
         }
         $this->name = $name;
     }
@@ -33,7 +33,7 @@ class User
     private function setEmail($email)
     {
         if(!filter_var($email, FILTER_VALIDATE_EMAIL)){
-            throw new \Exception('Email inválido');
+            throw new \DomainException('Email inválido');
         }
 
         $this->email = $email;
@@ -48,7 +48,7 @@ class User
     {
         list($year, $month, $day) = explode('-', $birth);
         if(!checkdate($month, $day, $year)) {
-            throw new \Exception('Data de nascimento inválida');
+            throw new \DomainException('Data de nascimento inválida');
         }
         $this->birth = $birth;
     }
@@ -58,14 +58,10 @@ class User
         return $this->birth;
     }
 
-    private function setPassword($password, $password_confirmation)
+    private function setPassword($password)
     {
-        if($password != $password_confirmation) {
-            throw new \Exception('Senha e confirmação de senha não são a mesma');
-        }
-
-        if(strlen($password) <= 5) {
-            throw new \Exception('Senha precisa ser maior que 5 caracteres');
+        if(strlen($password) < 8) {
+            throw new \DomainException('Senha precisa ser maior ou igual a 8 caracteres');
         }
 
         $this->password = password_hash($password, PASSWORD_BCRYPT);
