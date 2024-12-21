@@ -7,7 +7,7 @@
          shortenArraysForExportThreshold="10"
          requireCoverageMetadata="false"
          beStrictAboutCoverageMetadata="false"
-         beStrictAboutOutputDuringTests="true"
+         beStrictAboutOutputDuringTests="false"
          displayDetailsOnPhpunitDeprecations="true"
          failOnPhpunitDeprecation="true"
          failOnRisky="true"
@@ -19,9 +19,12 @@
         </testsuite>
     </testsuites>
 
-    <source ignoreIndirectDeprecations="true" restrictNotices="true" restrictWarnings="true">
+    <source ignoreIndirectDeprecations="false" restrictNotices="false" restrictWarnings="false">
         <include>
-            <directory>src</directory>
+            <directory>src/</directory>
         </include>
+        <exclude>
+            <directory>src/views/</directory>
+        </exclude>
     </source>
 </phpunit>

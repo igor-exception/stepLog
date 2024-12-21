@@ -2,6 +2,8 @@
 namespace APP;
 use APP\UserRepository;
 use APP\UserRepositoryInterface;
+use APP\Exceptions\RepositoryException;
+use APP\Exceptions\ServiceException;
 use APP\User;
 
 class UserService
@@ -12,13 +14,13 @@ class UserService
         $this->userRepository = $userRepository;
     }
 
-    public function register(string $name, string $email, string $birth, string $password)
+    public function register(string $name, string $email, string $birth, string $password): int
     {
         try {
             $user = new User($name, $email, $birth, $password);
             return $this->userRepository->save($user);
         }catch (RepositoryException $e) {
-            throw new ServiceException("Erro ao registrar usuário: " . $e->getMessage(), 0, $e);
+            throw new ServiceException("Erro ao registrar usuário: ". $e->getMessage(), 0, $e);
         }
         
     }

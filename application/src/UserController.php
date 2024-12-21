@@ -3,6 +3,7 @@ namespace APP;
 
 use APP\UserService;
 use APP\Helpers\DateHelper;
+use APP\Exceptions\ServiceException;
 
 class UserController
 {
@@ -18,26 +19,26 @@ class UserController
         $errors = [];
         try {
             if(empty($name)) {
-                throw new Exception('Campo nome não pode ser vazio!');
+                throw new \Exception('Campo nome não pode ser vazio!');
             }
             if(empty($email)) {
-                throw new Exception('Email inválido');
+                throw new \Exception('Email inválido');
             }
 
             if(!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-                throw new Exception('Email no formato inválido, verifique!');
+                throw new \Exception('Email no formato inválido, verifique!');
             }
 
             if(!DateHelper::isValidDate($birth)) {
-                throw new Exception('Data de nascimento deve ser preenchida com dados válidos');
+                throw new \Exception('Data de nascimento deve ser preenchida com dados válidos');
             }
 
             if(strlen($password) < 8) {
-                throw new Exception('Campo senha deve ter no mínimo 8 caracteres');
+                throw new \Exception('Campo senha deve ter no mínimo 8 caracteres');
             }
 
             if($password != $passwordConfirmation) {
-                throw new Exception('Senha e confirmação de senha estão diferentes. Verifique!');
+                throw new \Exception('Senha e confirmação de senha estão diferentes. Verifique!');
             }
 
             $userId = $this->userService->register($name, $email, $birth, $password);
@@ -45,11 +46,11 @@ class UserController
             $_SESSION['success_message'] = "Usuário cadastrado com sucesso!";
 
             header("Location: /src/views/user/list.php");
-            exit;
+            return;
         }catch(ServiceException $e) {
             $_SESSION['error_message'] = 'Erro ao registrar usuário';
         }catch(\Exception $e) {
-            $_SESSION['error_message'] = 'Erro fatal!';
+            $_SESSION['error_message'] = 'Erro: '. $e->getMessage();
         }
     }
 }
