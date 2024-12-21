@@ -19,6 +19,7 @@ class User
     private function setName($name)
     {
         $name = trim(preg_replace('/\s+/', ' ',$name));
+        $name = mb_convert_case(strtolower($name), MB_CASE_TITLE, 'UTF-8');
         if(strlen($name) <= 3 || strlen($name) > 150) {
             throw new \DomainException('Nome deve ser entre 4 e 150 caracteres');
         }

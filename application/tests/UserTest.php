@@ -19,6 +19,21 @@ class UserTest extends TestCase
         $this->assertNotEquals($password, $user->getPassword());
     }
 
+    public function testCreateValidUserWithUTF8Letters()
+    {
+        $name = "JOsÉ AntÔnio GONçAlves";
+        $email = 'jose@gmail.com';
+        $birth = '1990-04-03';
+        $password = '123a456b';
+        $password_confirmation = '123a456b';
+
+        $user = new User($name, $email, $birth, $password, $password_confirmation);
+        $this->assertEquals("José Antônio Gonçalves", $user->getName());
+        $this->assertEquals($email, $user->getEmail());
+        $this->assertEquals($birth, $user->getBirth());
+        $this->assertNotEquals($password, $user->getPassword());
+    }
+
     public function testCreateUserWithInvalidName()
     {
         $name = 'Joh';
