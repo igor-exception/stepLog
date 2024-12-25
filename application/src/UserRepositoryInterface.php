@@ -5,5 +5,5 @@ use APP\User;
 
 interface UserRepositoryInterface
 {
-    public function save(User $user): int;
+    public function save(User $user): string|false;
 }

@@ -13,7 +13,7 @@ class UserRepository implements UserRepositoryInterface
         $this->pdo = $pdo;
     }
 
-    public function save(User $user): int
+    public function save(User $user): string|false
     {
         try {
             $name = $user->getName();

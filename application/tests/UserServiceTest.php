@@ -13,7 +13,7 @@ class UserServiceTest extends TestCase
     public function testUserServiceWithValidData()
     {
         $mockUserRepository = $this->createMock(UserRepository::class);
-        $mockUserRepository->method('save')->willReturn(1);
+        $mockUserRepository->method('save')->willReturn('1');
         $userService = new UserService($mockUserRepository);
         $name = 'John Doe';
         $email = 'john@gmail.com';
