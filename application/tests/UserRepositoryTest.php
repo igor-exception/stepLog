@@ -41,4 +41,35 @@ class UserRepositoryTest extends TestCase
         $this->assertEquals("1", $createdUserId);
     }
 
+    public function testSaveThrowException()
+    {
+        $name = 'John Doe';
+        $email = 'john@gmail.com';
+        $birth = '1990-04-03';
+        $password = '123a456b';
+        $user = new User($name, $email, $birth, $password);
+
+        $mockStatement = $this->createMock(\PDOStatement::class);
+        $mockStatement->expects($this->once())
+            ->method('execute')
+            ->with([
+                'name' => $user->getName(),
+                'email' => $user->getEmail(),
+                'birth' => $user->getBirth(),
+                'password' => $user->getPassword()
+            ])
+            ->willThrowException(new RepositoryException('Erro no banco.'));
+
+        $mockPdo = $this->createMock(\PDO::class);
+        $mockPdo->expects($this->once())
+            ->method('prepare')
+            ->with("INSERT INTO users(name, email, birth, password) VALUES (:name, :email, :birth, :password);")
+            ->willReturn($mockStatement);
+
+        $this->expectException(RepositoryException::class);
+        $this->expectExceptionMessage('Erro no banco.');
+        
+        $userRepository = new APP\UserRepository($mockPdo);
+        $userRepository->save($user);
+    }
 }
