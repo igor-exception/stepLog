@@ -30,7 +30,7 @@ class UserRepository implements UserRepositoryInterface
             ]);
     
             return $this->pdo->lastInsertId();
-        }catch(PDOException $e) {
+        }catch(\PDOException $e) {
             throw new RepositoryException("Erro no banco.", 0, $e);
         }
     }

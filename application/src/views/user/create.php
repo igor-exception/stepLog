@@ -1,36 +1,6 @@
+<?php require_once(__DIR__.'/../partial/header.php')
+?>
 <?php
-
-    require_once '../../../vendor/autoload.php';
-    session_start();
-
-    use APP\UserController;
-    use APP\UserRepository;
-    use APP\UserService;
-
-
-    if(isset($_POST) && !empty($_POST['name'])){
-        $pdo = new \PDO('mysql:host=steplogdb;dbname=steplog;charset=utf8mb4', 'root', 'passwd');
-        $repository = new UserRepository($pdo);
-        $service = new UserService($repository);
-        $controller = new UserController($service);
-        $controller->createUser(
-            $_POST['name'],
-            $_POST['email'],
-            $_POST['birth'],
-            $_POST['password'],
-            $_POST['password-confirmation']
-        );
-    }
-
-
-    // Verifica se existe uma mensagem de sucesso
-    if (!empty($_SESSION['error_message'])) {
-        echo "<div>" . htmlspecialchars($_SESSION['error_message']) . "</div>";
-        
-        // Remove a mensagem para não exibir novamente
-        unset($_SESSION['error_message']);
-    }
-
 # gera dados randoms pra criar usuario
 $random = Random_int(1, 1000) . "_" . time() . "_" . Random_int(1, 1000);
 $day = Random_int(1, 28);
@@ -42,9 +12,9 @@ $date = (new Datetime)->setDate($year, $month, $day);
 $birth = $date->format('Y-m-d');
 ?>
 
-<?php require_once('../partial/header.php') ?>
 
-        <form method="POST" action="create.php">
+
+        <form method="POST" action="/user/create">
             <label for="name">Nome: </label>
             <input type="text" name="name" value="<?= 'John ' . $random?>"><br><br>
             
@@ -62,4 +32,4 @@ $birth = $date->format('Y-m-d');
 
             <input type="submit" value="Adicionar usuário">
         </form>
-<?php require_once('../partial/footer.php') ?>
+<?php require_once(__DIR__.'/../partial/footer.php') ?>

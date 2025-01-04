@@ -7,6 +7,7 @@ use APP\Exceptions\ServiceException;
 
 class UserControllerTest extends TestCase
 {
+
     public function testCreateUserWithValidParams()
     {
         $mockUserService = $this->createMock(UserService::class);
@@ -17,7 +18,8 @@ class UserControllerTest extends TestCase
         $birth = '1990-04-03';
         $password = '123a456b';
         $passwordConfirmation = '123a456b';
-        $userController->createUser($name, $email, $birth, $password, $passwordConfirmation);
+        $userController->store($name, $email, $birth, $password, $passwordConfirmation);
+
         $this->assertEquals($_SESSION['success_message'], 'Usuário cadastrado com sucesso!');
     }
 
@@ -31,7 +33,7 @@ class UserControllerTest extends TestCase
         $mockUserSession = $this->createMock(UserService::class);
         $mockUserSession->method('register')->willReturn(1);
         $userController = new UserController($mockUserSession);
-        $userController->createUser($name, $email, $birth, $password, $passwordConfirmation);
+        $userController->store($name, $email, $birth, $password, $passwordConfirmation);
         $this->assertEquals($_SESSION['error_message'], 'Erro: Campo nome não pode ser vazio!');
     }
 
@@ -45,7 +47,7 @@ class UserControllerTest extends TestCase
         $mockUserSession = $this->createMock(UserService::class);
         $mockUserSession->method('register')->willReturn(1);
         $userController = new UserController($mockUserSession);
-        $userController->createUser($name, $email, $birth, $password, $passwordConfirmation);
+        $userController->store($name, $email, $birth, $password, $passwordConfirmation);
         $this->assertEquals($_SESSION['error_message'], 'Erro: Email inválido');
     }
 
@@ -59,7 +61,7 @@ class UserControllerTest extends TestCase
         $mockUserSession = $this->createMock(UserService::class);
         $mockUserSession->method('register')->willReturn(1);
         $userController = new UserController($mockUserSession);
-        $userController->createUser($name, $email, $birth, $password, $passwordConfirmation);
+        $userController->store($name, $email, $birth, $password, $passwordConfirmation);
         $this->assertEquals($_SESSION['error_message'], 'Erro: Email no formato inválido, verifique!');
     }
 
@@ -73,7 +75,7 @@ class UserControllerTest extends TestCase
         $mockUserSession = $this->createMock(UserService::class);
         $mockUserSession->method('register')->willReturn(1);
         $userController = new UserController($mockUserSession);
-        $userController->createUser($name, $email, $birth, $password, $passwordConfirmation);
+        $userController->store($name, $email, $birth, $password, $passwordConfirmation);
         $this->assertEquals($_SESSION['error_message'], 'Erro: Data de nascimento deve ser preenchida com dados válidos');
     }
 
@@ -87,7 +89,7 @@ class UserControllerTest extends TestCase
         $mockUserSession = $this->createMock(UserService::class);
         $mockUserSession->method('register')->willReturn(1);
         $userController = new UserController($mockUserSession);
-        $userController->createUser($name, $email, $birth, $password, $passwordConfirmation);
+        $userController->store($name, $email, $birth, $password, $passwordConfirmation);
         $this->assertEquals($_SESSION['error_message'], 'Erro: Data de nascimento deve ser preenchida com dados válidos');
     }
 
@@ -101,7 +103,7 @@ class UserControllerTest extends TestCase
         $mockUserSession = $this->createMock(UserService::class);
         $mockUserSession->method('register')->willReturn(1);
         $userController = new UserController($mockUserSession);
-        $userController->createUser($name, $email, $birth, $password, $passwordConfirmation);
+        $userController->store($name, $email, $birth, $password, $passwordConfirmation);
         $this->assertEquals($_SESSION['error_message'], 'Erro: Campo senha deve ter no mínimo 8 caracteres');
     }
 
@@ -115,7 +117,7 @@ class UserControllerTest extends TestCase
         $mockUserSession = $this->createMock(UserService::class);
         $mockUserSession->method('register')->willReturn(1);
         $userController = new UserController($mockUserSession);
-        $userController->createUser($name, $email, $birth, $password, $passwordConfirmation);
+        $userController->store($name, $email, $birth, $password, $passwordConfirmation);
         $this->assertEquals($_SESSION['error_message'], 'Erro: Senha e confirmação de senha estão diferentes. Verifique!');
     }
 
@@ -129,7 +131,7 @@ class UserControllerTest extends TestCase
         $mockUserSession = $this->createMock(UserService::class);
         $mockUserSession->method('register')->willThrowException(new ServiceException('Erro ao registrar usuário'));
         $userController = new UserController($mockUserSession);
-        $userController->createUser($name, $email, $birth, $password, $passwordConfirmation);
+        $userController->store($name, $email, $birth, $password, $passwordConfirmation);
         $this->assertEquals($_SESSION['error_message'], 'Erro ao registrar usuário');
     }
 }

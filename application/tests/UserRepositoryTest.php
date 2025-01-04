@@ -58,7 +58,7 @@ class UserRepositoryTest extends TestCase
                 'birth' => $user->getBirth(),
                 'password' => $user->getPassword()
             ])
-            ->willThrowException(new RepositoryException('Erro no banco.'));
+            ->willThrowException(new \PDOException);
 
         $mockPdo = $this->createMock(\PDO::class);
         $mockPdo->expects($this->once())

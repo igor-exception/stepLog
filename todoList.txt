@@ -1,0 +1,9 @@
+----Lista de tarefas-----
+- Melhorar o sistema de Rotas, o objetivo era apenas fazer funcionar, depois fazer direito.
+- Melhorar Exceptions. Ex: Ao inserir um usuario que ja tem email registrado, mostrar! Atualmente mostra apena: Erro ao registrar usuario.
+- Diminuir repetição de códico, criar mais helpers e funcions, ex: No Controller, a todo momento é chamado:
+    [...]
+    session_write_close();
+    header("Location: /user/create");
+    exit;
+- Ao ter um erro no no cadastro de usuario, preencher os forms com as informacoes antes existentes

@@ -1,10 +1,35 @@
 <?php
-
+if (session_status() !== PHP_SESSION_ACTIVE) {
+    session_start();
+}
+define('APP_START', true);
 require_once './vendor/autoload.php';
+require_once 'routes.php';
+
+use APP\Helpers\RouterHelper;
+
+$requestUri = $_SERVER['REQUEST_URI'] ?? '/';
+$requestMethod = $_SERVER['REQUEST_METHOD'] ?? 'GET';
+
+if (isset($routes[$requestMethod][$requestUri])) {
+    $route = $routes[$requestMethod][$requestUri];
+    $controllerDependencies = [];
+    foreach($route['dependencies'] as $dependency) {
+        $controllerDependencies[] = resolveDependencies($dependency);
+    }
+
+    // Cria o controlador e chama a ação
+    $controller = new $route['controller'](...$controllerDependencies);
+    $action = $route['action'];
+    $params = [];
+    if(!empty($_POST)) {
+        $params = array_values($_POST);
+    }
+    $controller->$action(...$params);
+} else {
+    http_response_code(404);
+    echo "Rota não encontrada.";
+}
 
 ?>
 
-<h1>Seja bem vindo ao StepLog</h1>
-<h3>O que deseja fazer?</h3>
-<br><br><a href="src/views/user/create.php">Criar Usuário</a>
-<br><br><a href="src/views/user/list.php">Listar Usuário</a>

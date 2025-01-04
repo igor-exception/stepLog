@@ -14,7 +14,17 @@ class UserController
         $this->userService = $userService;
     }
 
-    public function createUser(string $name, string $email, string $birth, string $password, string $passwordConfirmation): void
+    public function create(): void
+    {
+        require __DIR__ . '/views/user/create.php';
+    }
+
+    public function index(): void
+    {
+        require __DIR__ . '/views/user/list.php';
+    }
+
+    public function store(string $name, string $email, string $birth, string $password, string $passwordConfirmation): void
     {
         $errors = [];
         try {
@@ -40,17 +50,22 @@ class UserController
             if($password != $passwordConfirmation) {
                 throw new \Exception('Senha e confirmação de senha estão diferentes. Verifique!');
             }
-
             $userId = $this->userService->register($name, $email, $birth, $password);
-            session_start();
             $_SESSION['success_message'] = "Usuário cadastrado com sucesso!";
-
-            header("Location: /src/views/user/list.php");
+            session_write_close();
+            header("Location: /users");
             return;
         }catch(ServiceException $e) {
             $_SESSION['error_message'] = 'Erro ao registrar usuário';
+            session_write_close();
+            header("Location: /user/create");
+            return;
         }catch(\Exception $e) {
             $_SESSION['error_message'] = 'Erro: '. $e->getMessage();
+            session_write_close();
+            header("Location: /user/create");
+            return;
         }
     }
+
 }

@@ -28,6 +28,8 @@ COPY ./init/start_composer.sh /tmp/start_composer.sh
 
 RUN chmod +x /tmp/entrypoint.sh /tmp/start_composer.sh
 
+RUN a2enmod rewrite
+
 ENTRYPOINT ["/tmp/entrypoint.sh"]
 
 CMD ["apachectl", "-D", "FOREGROUND"]
