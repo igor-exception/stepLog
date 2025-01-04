@@ -28,8 +28,12 @@ COPY ./init/start_composer.sh /tmp/start_composer.sh
 
 RUN chmod +x /tmp/entrypoint.sh /tmp/start_composer.sh
 
+RUN sed -i '/<Directory \/var\/www\/>/,/<\/Directory>/ s/AllowOverride None/AllowOverride All/' /etc/apache2/apache2.conf
+
 RUN a2enmod rewrite
 
 ENTRYPOINT ["/tmp/entrypoint.sh"]
 
 CMD ["apachectl", "-D", "FOREGROUND"]
+
+
