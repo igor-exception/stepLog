@@ -1,5 +1,6 @@
+use steplog;
 
-CREATE TABLE users(
+CREATE TABLE if not exists users(
 	user_id int primary key auto_increment,
     name varchar(150) not null,
     email varchar(150) unique,
