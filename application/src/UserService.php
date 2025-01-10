@@ -22,6 +22,14 @@ class UserService
         }catch (RepositoryException $e) {
             throw new ServiceException("Erro ao registrar usuário: ". $e->getMessage(), 0, $e);
         }
-        
+    }
+
+    public function getAllUsers(): array
+    {
+        try {
+            return $this->userRepository->findAll();
+        }catch (RepositoryException $e) {
+            throw new ServiceException("Erro ao consultar usuário: ". $e->getMessage(), 0, $e);
+        }
     }
 }

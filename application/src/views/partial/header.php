@@ -11,11 +11,6 @@
   usando a forma correta, passara pelo array de endpoint para resolver as rotas.
 */
 
-if (!defined('APP_START')) {
-    http_response_code(403);
-    die('Acesso direto não permitido. Todo redirecionamento de rota deve passar pelo ./index.php');
-}
-
 function displayFlashMessages() {
   if(!empty($_SESSION['success_message'])) {
     echo '<div>' . $_SESSION['success_message'] . '</div>';
@@ -30,7 +25,8 @@ function displayFlashMessages() {
 <!DOCTYPE html>
 <html lang="pt-BR">
   <head>
-    
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
   </head>
   <body>
   <br><a href="/">Voltar</a><br>

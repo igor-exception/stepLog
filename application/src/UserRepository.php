@@ -28,8 +28,19 @@ class UserRepository implements UserRepositoryInterface
                 'birth' => $birth,
                 'password' => $password
             ]);
-    
+
             return $this->pdo->lastInsertId();
+        }catch(\PDOException $e) {
+            throw new RepositoryException("Erro no banco.", 0, $e);
+        }
+    }
+
+    public function findAll(): array
+    {
+        try {
+            $stmt = $this->pdo->query("SELECT user_id, name, email, birth FROM users");
+            $data = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+            return $data;
         }catch(\PDOException $e) {
             throw new RepositoryException("Erro no banco.", 0, $e);
         }

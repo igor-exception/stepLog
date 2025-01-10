@@ -2,7 +2,7 @@
 if (session_status() !== PHP_SESSION_ACTIVE) {
     session_start();
 }
-define('APP_START', true);
+
 require_once './vendor/autoload.php';
 require_once 'routes.php';
 

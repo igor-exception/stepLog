@@ -4,8 +4,9 @@ namespace APP;
 use APP\UserService;
 use APP\Helpers\DateHelper;
 use APP\Exceptions\ServiceException;
+use APP\Controller;
 
-class UserController
+class UserController extends Controller
 {
     private $userService;
 
@@ -16,12 +17,22 @@ class UserController
 
     public function create(): void
     {
-        require __DIR__ . '/views/user/create.php';
+        $this->render('user/create');
     }
 
     public function index(): void
     {
-        require __DIR__ . '/views/user/list.php';
+        $listUsers = [];
+        try{
+            $listUsers = $this->userService->getAllUsers();
+        }catch(ServiceException $e) {
+            $_SESSION['error_message'] = "Erro ao buscar usuários";
+            session_write_close();
+        }catch(\Throwable $e) {
+            $_SESSION['error_message'] = "Erro ao processar solicitação";
+            session_write_close();
+        }
+        $this->render('user/list', ['listUsers' => $listUsers]);
     }
 
     public function store(string $name, string $email, string $birth, string $password, string $passwordConfirmation): void

@@ -38,4 +38,57 @@ class UserServiceTest extends TestCase
         
         $userId = $userService->register($name, $email, $birth, $password);
     }
+
+    public function testGetAllUsers()
+    {
+        $listUsers = [
+            [
+                'user_id' => '1',
+                'name' => 'John Doe',
+                'email' => 'john@gmail.com',
+                'birth' => '1990-01-01'
+            ],
+            [
+                'user_id' => '2',
+                'name' => 'Mary Doe',
+                'email' => 'mary@gmail.com',
+                'birth' => '1995-01-01'
+            ]
+        ];
+        $mockRepository = $this->createMock(UserRepository::class);
+        $mockRepository->expects($this->once())
+            ->method('findAll')
+            ->willReturn($listUsers);
+        
+        $userService = new UserService($mockRepository);
+        $usersListData = $userService->getAllUsers();
+        $this->assertEquals($listUsers, $usersListData);
+    }
+
+    public function testGetAllUsersException()
+    {
+        $this->expectException(ServiceException::class);
+        $this->expectExceptionMessage("Erro ao consultar usuário:");
+
+        $listUsers = [
+            [
+                'user_id' => '1',
+                'name' => 'John Doe',
+                'email' => 'john@gmail.com',
+                'birth' => '1990-01-01'
+            ],
+            [
+                'user_id' => '2',
+                'name' => 'Mary Doe',
+                'email' => 'mary@gmail.com',
+                'birth' => '1995-01-01'
+            ]
+        ];
+        $mockRepository = $this->createMock(UserRepository::class);
+        $mockRepository->expects($this->once())
+            ->method('findAll')
+            ->willThrowException(new RepositoryException());
+        $userService = new UserService($mockRepository);
+        $usersListData = $userService->getAllUsers();
+    }
 }

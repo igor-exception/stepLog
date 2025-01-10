@@ -1,10 +1,10 @@
 <?php
 namespace APP;
-
-class InitController
+use APP\Controller;
+class InitController extends Controller
 {
     public function index(): void
     {
-        require __DIR__ . '/views/init/index.php';
+        $this->render('init/index');
     }
 }

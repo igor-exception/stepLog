@@ -134,4 +134,49 @@ class UserControllerTest extends TestCase
         $userController->store($name, $email, $birth, $password, $passwordConfirmation);
         $this->assertEquals($_SESSION['error_message'], 'Erro ao registrar usuário');
     }
+
+    public function testIndex()
+    {
+        $mockService = $this->createMock(UserService::class);
+        $mockService->expects($this->once())
+            ->method('getAllUsers')
+            ->willReturn([
+                ['user_id' => '1',
+                'name' => 'John Doe',
+                'email' => 'john@gmail.com',
+                'birth' => '1960-01-01']
+            ]);
+        $userController = new UserController($mockService);
+        ob_start();
+        $userController->index();
+        $output = ob_get_clean();
+        $this->assertStringContainsString('John Doe', $output);
+        $this->assertStringContainsString('john@gmail.com', $output);
+    }
+
+    public function testIndexServiceException()
+    {
+        ob_start();
+        $mockService = $this->createMock(UserService::class);
+        $mockService->expects($this->once())
+            ->method('getAllUsers')
+            ->willThrowException(new ServiceException);
+        $userController = new UserController($mockService);
+        $userController->index();
+        ob_end_clean();
+        $this->assertEquals('Erro ao buscar usuários', $_SESSION['error_message']);
+    }
+
+    public function testIndexThrowableException()
+    {
+        ob_start();
+        $mockService = $this->createMock(UserService::class);
+        $mockService->expects($this->once())
+            ->method('getAllUsers')
+            ->willThrowException(new Exception);
+        $userController = new UserController($mockService);
+        $userController->index();
+        ob_end_clean();
+        $this->assertEquals('Erro ao processar solicitação', $_SESSION['error_message']);
+    }
 }
