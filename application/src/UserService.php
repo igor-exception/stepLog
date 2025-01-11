@@ -17,7 +17,7 @@ class UserService
     public function register(string $name, string $email, string $birth, string $password): int
     {
         try {
-            $user = new User($name, $email, $birth, $password);
+            $user = User::create($name, $email, $birth, $password);
             return $this->userRepository->save($user);
         }catch (RepositoryException $e) {
             throw new ServiceException("Erro ao registrar usuário: ". $e->getMessage(), 0, $e);

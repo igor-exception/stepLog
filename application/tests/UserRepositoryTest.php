@@ -13,7 +13,7 @@ class UserRepositoryTest extends TestCase
         $email = 'john@gmail.com';
         $birth = '1990-04-03';
         $password = '123a456b';
-        $user = new User($name, $email, $birth, $password);
+        $user = User::create($name, $email, $birth, $password);
 
         $mockStatement = $this->createMock(\PDOStatement::class);
         $mockStatement->expects($this->once())
@@ -47,7 +47,7 @@ class UserRepositoryTest extends TestCase
         $email = 'john@gmail.com';
         $birth = '1990-04-03';
         $password = '123a456b';
-        $user = new User($name, $email, $birth, $password);
+        $user = User::create($name, $email, $birth, $password);
 
         $mockStatement = $this->createMock(\PDOStatement::class);
         $mockStatement->expects($this->once())

@@ -12,7 +12,7 @@ class UserTest extends TestCase
         $password = '123a456b';
         $password_confirmation = '123a456b';
 
-        $user = new User($name, $email, $birth, $password, $password_confirmation);
+        $user = User::create($name, $email, $birth, $password, $password_confirmation);
         $this->assertEquals($name, $user->getName());
         $this->assertEquals($email, $user->getEmail());
         $this->assertEquals($birth, $user->getBirth());
@@ -27,7 +27,7 @@ class UserTest extends TestCase
         $password = '123a456b';
         $password_confirmation = '123a456b';
 
-        $user = new User($name, $email, $birth, $password, $password_confirmation);
+        $user = User::create($name, $email, $birth, $password, $password_confirmation);
         $this->assertEquals("José Antônio Gonçalves", $user->getName());
         $this->assertEquals($email, $user->getEmail());
         $this->assertEquals($birth, $user->getBirth());
@@ -45,7 +45,7 @@ class UserTest extends TestCase
         
         $this->expectException(\DomainException::class);
         $this->expectExceptionMessage('Nome deve ser entre 4 e 150 caracteres');
-        $user = new User($name, $email, $birth, $password, $password_confirmation);
+        $user = User::create($name, $email, $birth, $password, $password_confirmation);
     }
 
     public function testCreateUserWithInvalidNameWithSpaces()
@@ -59,7 +59,7 @@ class UserTest extends TestCase
         
         $this->expectException(\DomainException::class);
         $this->expectExceptionMessage('Nome deve ser entre 4 e 150 caracteres');
-        $user = new User($name, $email, $birth, $password, $password_confirmation);
+        $user = User::create($name, $email, $birth, $password, $password_confirmation);
     }
 
     public function testCreateUserWithInvalidEmail()
@@ -73,7 +73,7 @@ class UserTest extends TestCase
         
         $this->expectException(\DomainException::class);
         $this->expectExceptionMessage('Email inválido');
-        $user = new User($name, $email, $birth, $password, $password_confirmation);
+        $user = User::create($name, $email, $birth, $password, $password_confirmation);
     }
 
     public function testCreateUserWithInvalidBirth()
@@ -87,7 +87,7 @@ class UserTest extends TestCase
         
         $this->expectException(\DomainException::class);
         $this->expectExceptionMessage('Data de nascimento inválida');
-        $user = new User($name, $email, $birth, $password, $password_confirmation);
+        $user = User::create($name, $email, $birth, $password, $password_confirmation);
     }
 
     public function testCreateUserWithInvalidPasswordLength()
@@ -101,6 +101,6 @@ class UserTest extends TestCase
         
         $this->expectException(\DomainException::class);
         $this->expectExceptionMessage('Senha precisa ser maior ou igual a 8 caracteres');
-        $user = new User($name, $email, $birth, $password, $password_confirmation);
+        $user = User::create($name, $email, $birth, $password, $password_confirmation);
     }
 }

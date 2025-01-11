@@ -3,17 +3,24 @@ namespace APP;
 
 class User
 {
-    private $name;
-    private $email;
-    private $birth;
-    private $password;
+    private ?int $int;
+    private string $name;
+    private string $email;
+    private string $birth;
+    private string $password;
     
-    public function __construct($name, $email, $birth, $password)
+    private function __construct($name, $email, $birth, $passwordHash)
     {
         $this->setName($name);
         $this->setEmail($email);
         $this->setBirth($birth);
-        $this->setPassword($password);
+        $this->password = $passwordHash;
+    }
+
+    public static function create($name, $email, $birth, $password)
+    {
+        $passwordHash = self::encrypty($password);
+        return new self($name, $email, $birth, $passwordHash);
     }
 
     private function setName($name)
@@ -59,13 +66,13 @@ class User
         return $this->birth;
     }
 
-    private function setPassword($password)
+    private static function encrypty($password)
     {
         if(strlen($password) < 8) {
             throw new \DomainException('Senha precisa ser maior ou igual a 8 caracteres');
         }
 
-        $this->password = password_hash($password, PASSWORD_BCRYPT);
+        return password_hash($password, PASSWORD_BCRYPT);
     }
 
     public function getPassword()
