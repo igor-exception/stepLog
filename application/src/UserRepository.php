@@ -39,8 +39,12 @@ class UserRepository implements UserRepositoryInterface
     {
         try {
             $stmt = $this->pdo->query("SELECT user_id, name, email, birth FROM users");
-            $data = $stmt->fetchAll(\PDO::FETCH_ASSOC);
-            return $data;
+            $usersData = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+            $users = [];
+            foreach($usersData as $userData) {
+                $users[] = User::hydrateWithoutPasswordHash((int)$userData['user_id'], $userData['name'], $userData['email'], $userData['birth']);
+            }
+            return $users;
         }catch(\PDOException $e) {
             throw new RepositoryException("Erro no banco.", 0, $e);
         }

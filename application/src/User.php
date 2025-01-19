@@ -3,13 +3,13 @@ namespace APP;
 
 class User
 {
-    private ?int $int;
+    private ?int $id;
     private string $name;
     private string $email;
     private string $birth;
-    private string $password;
+    private ?string $password;
     
-    private function __construct($name, $email, $birth, $passwordHash)
+    private function __construct(string $name, string $email, string $birth, ?string $passwordHash)
     {
         $this->setName($name);
         $this->setEmail($email);
@@ -17,10 +17,22 @@ class User
         $this->password = $passwordHash;
     }
 
-    public static function create($name, $email, $birth, $password)
+    public static function create(string $name, string $email, string $birth, string $password)
     {
         $passwordHash = self::encrypty($password);
         return new self($name, $email, $birth, $passwordHash);
+    }
+
+    public static function hydrateWithoutPasswordHash(int $id, string $name, string $email, string $birth)
+    {
+        $user = new self($name, $email, $birth, null);
+        $user->id = $id;
+        return $user;
+    }
+
+    public function getId(): int
+    {
+        return $this->id;
     }
 
     private function setName($name)

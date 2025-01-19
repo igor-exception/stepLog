@@ -30,6 +30,7 @@ class UserController extends Controller
             session_write_close();
         }catch(\Throwable $e) {
             $_SESSION['error_message'] = "Erro ao processar solicitação";
+            error_log($e->getMessage());
             session_write_close();
         }
         $this->render('user/list', ['listUsers' => $listUsers]);
@@ -79,4 +80,13 @@ class UserController extends Controller
         }
     }
 
+    public function show(int $id): void
+    {
+        var_dump('Estou no SHOW do ID: ' . $id);
+    }
+
+    public function edit(int $id, string $name, string $email, string $birth): void
+    {
+        var_dump('Estou no EDIT do ID: ' . $id);
+    }
 }

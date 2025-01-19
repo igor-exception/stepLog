@@ -152,6 +152,7 @@ class UserControllerTest extends TestCase
         $output = ob_get_clean();
         $this->assertStringContainsString('John Doe', $output);
         $this->assertStringContainsString('john@gmail.com', $output);
+        
     }
 
     public function testIndexServiceException()

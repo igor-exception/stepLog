@@ -19,6 +19,16 @@ $routes = [
             'controller'    => 'APP\UserController',
             'action'        => 'index',
             'dependencies'  => [UserService::class]
+        ],
+        '/users/:id' => [
+            'controller'    => 'APP\UserController',
+            'action'        => 'show',
+            'dependencies'  => [UserService::class]
+        ],
+        '/users/:id/edit' => [
+            'controller'    => 'APP\UserController',
+            'action'        => 'edit',
+            'dependencies'  => [UserService::class]
         ]
     ],
     'POST' => [
@@ -29,21 +39,3 @@ $routes = [
         ]
     ]
 ];
-
-
-function resolveDependencies(string $dependencyName): object
-{
-    if($dependencyName == UserController::class) {
-        $pdo = new \PDO('mysql:host=steplogdb;dbname=steplog;charset=utf8mb4', 'root', 'passwd');
-        $repository = new UserRepository($pdo);
-        $service = new UserService($repository);
-        return new UserController($service);
-    }elseif($dependencyName == UserService::class) {
-        $pdo = new \PDO('mysql:host=steplogdb;dbname=steplog;charset=utf8mb4', 'root', 'passwd');
-        $repository = new UserRepository($pdo);
-        return new UserService($repository);
-    }elseif($dependencyName == UserRepository::class) {
-        $pdo = new \PDO('mysql:host=steplogdb;dbname=steplog;charset=utf8mb4', 'root', 'passwd');
-        return new UserRepository($pdo);
-    }
-}

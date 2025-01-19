@@ -9,15 +9,17 @@
         <th>Nome</th>
         <th>Email</th>
         <th>Nascimento</th>
+        <th>Opções</th>
     </tr>
 </thead>
 <tbody>
     <?php if(!empty($listUsers)) {?>
         <?php foreach($listUsers as $user) { ?>
             <tr>
-                <td><?= $user['name']?></td>
-                <td><?= $user['email']?></td>
-                <td><?= $user['birth']?></td>
+                <td><?= $user->getName()?></td>
+                <td><?= $user->getEmail()?></td>
+                <td><?= $user->getBirth()?></td>
+                <td><a href="/users/<?= $user->getId();?>">Ver</a> Editar Remover</td>
             </tr>
         <?php } ?>
     <?php }else{ ?>
