@@ -4,6 +4,7 @@ use PHPUnit\Framework\TestCase;
 use APP\UserController;
 use APP\UserService;
 use APP\Exceptions\ServiceException;
+use APP\User;
 
 class UserControllerTest extends TestCase
 {
@@ -138,13 +139,11 @@ class UserControllerTest extends TestCase
     public function testIndex()
     {
         $mockService = $this->createMock(UserService::class);
+        $user = User::hydrateWithoutPasswordHash(1, 'John Doe', 'john@gmail.com', '1960-01-01');
         $mockService->expects($this->once())
             ->method('getAllUsers')
             ->willReturn([
-                ['user_id' => '1',
-                'name' => 'John Doe',
-                'email' => 'john@gmail.com',
-                'birth' => '1960-01-01']
+                $user
             ]);
         $userController = new UserController($mockService);
         ob_start();

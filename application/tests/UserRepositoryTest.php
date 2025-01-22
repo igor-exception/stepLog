@@ -75,7 +75,14 @@ class UserRepositoryTest extends TestCase
 
     public function testFindAllUsers()
     {
-        $listUsers = [
+        $user1 = User::hydrateWithoutPasswordHash(1, 'John Doe', 'john@gmail.com', '1990-01-01');
+        $user2 = User::hydrateWithoutPasswordHash(2, 'Mary Doe', 'mary@gmail.com', '1995-01-01');
+        $listUsersObj = [
+            $user1,
+            $user2
+        ];
+
+        $listUsersArray = [
             [
                 'user_id' => '1',
                 'name' => 'John Doe',
@@ -93,7 +100,7 @@ class UserRepositoryTest extends TestCase
         $mockStatement->expects($this->once())
             ->method('fetchAll')
             ->with(\PDO::FETCH_ASSOC)
-            ->willReturn($listUsers);
+            ->willReturn($listUsersArray);
         $mockPdo = $this->createMock(PDO::class);
         $mockPdo->method('query')
             ->with('SELECT user_id, name, email, birth FROM users')
@@ -101,7 +108,7 @@ class UserRepositoryTest extends TestCase
         
         $userRepository = new UserRepository($mockPdo);
         $users = $userRepository->findAll();
-        $this->assertEquals($listUsers, $users);
+        $this->assertEquals($listUsersObj, $users);
     }
 
     public function testFindAllThrowException()
