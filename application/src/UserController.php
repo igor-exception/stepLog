@@ -80,12 +80,25 @@ class UserController extends Controller
         }
     }
 
-    public function show(int $id): void
+    public function show(string $id): void
     {
-        var_dump('Estou no SHOW do ID: ' . $id);
+        try {
+            $user = $this->userService->getUserById((int)$id);
+            $this->render('user/show', ['user' => $user]);
+        }catch(ServiceException $e) {
+            $_SESSION['error_message'] = 'Erro ao buscar usuário';
+            session_write_close();
+            header("Location: /user/list");
+            return;
+        }catch(\Exception $e) {
+            $_SESSION['error_message'] = 'Erro: '. $e->getMessage();
+            session_write_close();
+            header("Location: /user/list");
+            return;
+        }
     }
 
-    public function edit(int $id, string $name, string $email, string $birth): void
+    public function edit(int $id): void
     {
         var_dump('Estou no EDIT do ID: ' . $id);
     }

@@ -179,4 +179,29 @@ class UserControllerTest extends TestCase
         ob_end_clean();
         $this->assertEquals('Erro ao processar solicitação', $_SESSION['error_message']);
     }
+
+    public function testShowSuccess()
+    {
+        $user = User::hydrateWithoutPasswordHash(1, 'John Doe', 'john@gmail.com', '1960-01-01');
+        $mockUserService = $this->createMock(UserService::class);
+        // Configura o mock do serviço
+        $mockUserService->expects($this->once())
+                        ->method('getUserById')
+                        ->with(1)
+                        ->willReturn($user);
+    
+        // Cria o controlador mockado e injeta o UserService
+        $controller = $this->getMockBuilder(UserController::class)
+                           ->setConstructorArgs([$mockUserService]) // Passa o serviço pelo construtor
+                           ->onlyMethods(['render']) // Sobrescreve apenas o método render
+                           ->getMock();
+    
+        // Configura a expectativa do render
+        $controller->expects($this->once())
+                   ->method('render')
+                   ->with('user/show', ['user' => $user]);
+    
+        // Chama o método que está sendo testado
+        $controller->show('1');
+    }
 }

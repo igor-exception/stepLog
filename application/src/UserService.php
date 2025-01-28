@@ -32,4 +32,13 @@ class UserService
             throw new ServiceException("Erro ao consultar usuário: ". $e->getMessage(), 0, $e);
         }
     }
+
+    public function getUserById(int $id): ?User
+    {
+        try {
+            return $this->userRepository->findById($id);
+        }catch (RepositoryException $e) {
+            throw new ServiceException("Erro ao consultar usuário pelo ID: ". $e->getMessage(), 0, $e);
+        }
+    }
 }
