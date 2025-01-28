@@ -65,18 +65,15 @@ class UserController extends Controller
             $userId = $this->userService->register($name, $email, $birth, $password);
             $_SESSION['success_message'] = "Usuário cadastrado com sucesso!";
             session_write_close();
-            header("Location: /users");
-            return;
+            $this->redirect("/users");
         }catch(ServiceException $e) {
             $_SESSION['error_message'] = 'Erro ao registrar usuário';
             session_write_close();
-            header("Location: /user/create");
-            return;
+            $this->redirect("/user/create");
         }catch(\Exception $e) {
             $_SESSION['error_message'] = 'Erro: '. $e->getMessage();
             session_write_close();
-            header("Location: /user/create");
-            return;
+            $this->redirect("/user/create");
         }
     }
 
@@ -88,13 +85,11 @@ class UserController extends Controller
         }catch(ServiceException $e) {
             $_SESSION['error_message'] = 'Erro ao buscar usuário';
             session_write_close();
-            header("Location: /user/list");
-            return;
+            $this->redirect("/users");
         }catch(\Exception $e) {
             $_SESSION['error_message'] = 'Erro: '. $e->getMessage();
             session_write_close();
-            header("Location: /user/list");
-            return;
+            $this->redirect("/users");
         }
     }
 

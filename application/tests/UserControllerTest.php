@@ -204,4 +204,46 @@ class UserControllerTest extends TestCase
         // Chama o método que está sendo testado
         $controller->show('1');
     }
+
+    public function testShowServiceException()
+    {
+        $mockUserService = $this->createMock(UserService::class);
+        $mockUserService->expects($this->once())
+            ->method('getUserById')
+            ->with(100)
+            ->willThrowException(new ServiceException('Usuário não encontrado'));
+        
+        $controller = $this->getMockBuilder(UserController::class)
+                        ->setConstructorArgs([$mockUserService])
+                        ->onlyMethods(['redirect'])
+                        ->getMock();
+        
+        $controller->expects($this->once())
+            ->method('redirect')
+            ->with('/users');
+        
+        $controller->show(100);
+
+        $this->assertNotEmpty($_SESSION['error_message']);
+        $this->assertStringContainsString("Erro ao buscar usuário", $_SESSION['error_message']);
+    }
+
+    public function testActionShowThrowException()
+    {
+        $mockUserService = $this->createMock(UserService::class);
+        $mockUserService->expects($this->once())
+            ->method('getUserById')
+            ->with(100)
+            ->willThrowException(new Exception('Falha ao buscar'));
+        
+        $controller = $this->getMockBuilder(UserController::class)
+                        ->setConstructorArgs([$mockUserService])
+                        ->onlyMethods(['redirect'])
+                        ->getMock();
+        $controller->expects($this->once())
+            ->method('redirect')
+            ->with('/users');
+
+        $controller->show(100);
+    }
 }

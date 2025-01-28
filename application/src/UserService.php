@@ -36,7 +36,11 @@ class UserService
     public function getUserById(int $id): ?User
     {
         try {
-            return $this->userRepository->findById($id);
+            $user = $this->userRepository->findById($id);
+            if(!$user) {
+                throw new ServiceException('Usuário não encontrado', 0);
+            }
+            return $user;
         }catch (RepositoryException $e) {
             throw new ServiceException("Erro ao consultar usuário pelo ID: ". $e->getMessage(), 0, $e);
         }
