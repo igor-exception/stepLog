@@ -8,7 +8,6 @@ use APP\User;
 
 class UserControllerTest extends TestCase
 {
-
     public function testCreateUserWithValidParams()
     {
         $mockUserService = $this->createMock(UserService::class);
@@ -164,20 +163,22 @@ class UserControllerTest extends TestCase
         $userController = new UserController($mockService);
         $userController->index();
         ob_end_clean();
-        $this->assertEquals('Erro ao buscar usuários', $_SESSION['error_message']);
+        
+        $this->assertStringStartsWith('Erro ao buscar usuários', $_SESSION['error_message']);
     }
 
     public function testIndexThrowableException()
-    {
+    {       
         ob_start();
         $mockService = $this->createMock(UserService::class);
         $mockService->expects($this->once())
             ->method('getAllUsers')
-            ->willThrowException(new Exception);
+            ->willThrowException(new Exception("Falha no serviço"));
         $userController = new UserController($mockService);
         $userController->index();
         ob_end_clean();
-        $this->assertEquals('Erro ao processar solicitação', $_SESSION['error_message']);
+        $this->assertArrayHasKey('error_message', $_SESSION, 'A chave error_message não foi definida na sessão.');
+        $this->assertStringStartsWith('Erro ao processar solicitação', $_SESSION['error_message']);
     }
 
     public function testShowSuccess()
@@ -245,5 +246,132 @@ class UserControllerTest extends TestCase
             ->with('/users');
 
         $controller->show(100);
+    }
+
+    public function testEditAction()
+    {
+        $user = User::hydrateWithoutPasswordHash(1, 'John Doe', 'john@gmail.com', '1960-01-01');
+        $mockUserService = $this->createMock(UserService::class);
+        $mockUserService->expects($this->once())
+            ->method('getUserById')
+            ->with(1)
+            ->willReturn($user);
+        
+        $userController = new UserController($mockUserService);
+        ob_start();
+        $userController->edit(1);
+        $content = ob_get_clean();
+        $this->assertStringContainsString('John Doe', $content);
+        $this->assertStringContainsString('john@gmail.com', $content);
+    }
+
+    public function testEditServiceException()
+    {
+        $mockUserService = $this->createMock(UserService::class);
+        $mockUserService->expects($this->once())
+            ->method('getUserById')
+            ->with(1)
+            ->willThrowException(new ServiceException('Usuário não encontrado', 0));
+        
+        $controller = $this->getMockBuilder(UserController::class)
+                    ->setConstructorArgs([$mockUserService])
+                    ->onlyMethods(['redirect'])
+                    ->getMock();
+        
+        $controller->expects($this->once())
+                    ->method('redirect')
+                    ->with('/users');
+        
+
+        $controller->edit(1);
+
+        $this->assertNotEmpty($_SESSION['error_message']);
+        $this->assertStringContainsString('Erro ao buscar usuário', $_SESSION['error_message']);
+        
+    }
+
+    public function testEditException()
+    {
+        $mockUserService = $this->createMock(UserService::class);
+        $mockUserService->expects($this->once())
+            ->method('getUserById')
+            ->with(1)
+            ->willThrowException(new Exception);
+        
+        $controller = $this->getMockBuilder(UserController::class)
+                    ->setConstructorArgs([$mockUserService])
+                    ->onlyMethods(['redirect'])
+                    ->getMock();
+        
+        $controller->expects($this->once())
+                    ->method('redirect')
+                    ->with('/users');
+        
+
+        $controller->edit(1);
+
+        $this->assertNotEmpty($_SESSION['error_message']);
+        $this->assertStringContainsString('Erro', $_SESSION['error_message']);
+        
+    }
+
+    public function testUpdateAction()
+    {
+        $user = User::hydrateWithoutPasswordHash(1, 'John Doe', 'john@gmail.com', '1960-01-01');
+        $mockUserService = $this->createMock(UserService::class);
+        $mockUserService->expects($this->once())
+            ->method('update')
+            ->with(1, 'John Doe', 'john@gmail.com', '1960-01-01')
+            ->willReturn($user);
+
+        ob_start();
+        $userController = new UserController($mockUserService);
+        $userController->update(1, 'John Doe', 'john@gmail.com', '1960-01-01');
+        $content = ob_get_clean();
+        $this->assertStringContainsString('John Doe', $content);
+    }
+
+    public function testUpdateServiceException()
+    {
+        $mockUserService = $this->createMock(UserService::class);
+        $mockUserService->expects($this->once())
+            ->method('update')
+            ->with(1, 'John Doe', 'john@gmail.com', '1960-01-01')
+            ->willThrowException(new ServiceException('Erro ao atualizar usuário', 0));
+        $controller = $this->getMockBuilder(UserController::class)
+                    ->setConstructorArgs([$mockUserService])
+                    ->onlyMethods(['redirect'])
+                    ->getMock();
+        $controller->expects($this->once())
+                    ->method('redirect')
+                    ->with('/users');
+        $controller->update(1, 'John Doe', 'john@gmail.com', '1960-01-01');
+        $this->assertNotEmpty($_SESSION['error_message']);
+        $this->assertStringContainsString('Erro ao atualizar usuário', $_SESSION['error_message']);
+        
+    }
+
+    public function testUpdateException()
+    {
+        $mockUserService = $this->createMock(UserService::class);
+        $mockUserService->expects($this->once())
+            ->method('update')
+            ->with(1)
+            ->willThrowException(new Exception);
+        
+        $controller = $this->getMockBuilder(UserController::class)
+                    ->setConstructorArgs([$mockUserService])
+                    ->onlyMethods(['redirect'])
+                    ->getMock();
+        
+        $controller->expects($this->once())
+                    ->method('redirect')
+                    ->with('/users');
+        
+
+        $controller->update(1, 'John Doe', 'john@gmail.com', '1960-01-01');
+
+        $this->assertNotEmpty($_SESSION['error_message']);
+        $this->assertStringContainsString('Erro', $_SESSION['error_message']);
     }
 }

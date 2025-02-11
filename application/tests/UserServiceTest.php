@@ -68,7 +68,7 @@ class UserServiceTest extends TestCase
     public function testGetAllUsersException()
     {
         $this->expectException(ServiceException::class);
-        $this->expectExceptionMessage("Erro ao consultar usuário:");
+        $this->expectExceptionMessage("Erro ao consultar usuário");
 
         $listUsers = [
             [

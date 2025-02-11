@@ -37,5 +37,13 @@ $routes = [
             'action'        => 'store',
             'dependencies'  => [UserService::class]
         ]
+    ],
+    'PUT' => [
+        '/users/:id' => [
+            'controller'    => 'APP\UserController',
+            'action'        => 'update',
+            'dependencies'  => [UserService::class]
+        ]
     ]
+
 ];

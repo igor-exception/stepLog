@@ -21,6 +21,8 @@ RUN if [ "$PHP_ENV" = "production" ]; then \
 
 RUN sed -i 's|;date.timezone =|date.timezone = America/Sao_Paulo|' /usr/local/etc/php/php.ini
 
+RUN sed -i '0,/^;error_log =/s|^;error_log = .*|error_log = /var/log/apache2/error.log|' /usr/local/etc/php/php.ini
+
 RUN ls -l /
 
 COPY ./init/entrypoint.sh /tmp/entrypoint.sh

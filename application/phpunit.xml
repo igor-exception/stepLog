@@ -13,6 +13,14 @@
          failOnRisky="true"
          failOnWarning="true"
          colors="true">
+
+    <!-- Adicionando exibição de erros -->
+    <php>
+        <ini name="display_errors" value="1"/>
+        <ini name="display_startup_errors" value="1"/>
+        <ini name="error_reporting" value="-1"/>
+    </php>
+
     <testsuites>
         <testsuite name="default">
             <directory>tests</directory>

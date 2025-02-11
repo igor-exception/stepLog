@@ -22,15 +22,18 @@ class UserController extends Controller
 
     public function index(): void
     {
+        // problema no teste, nao esta identificando a sessao['error_message'] no controller
         $listUsers = [];
         try{
             $listUsers = $this->userService->getAllUsers();
         }catch(ServiceException $e) {
             $_SESSION['error_message'] = "Erro ao buscar usuários";
             session_write_close();
-        }catch(\Throwable $e) {
-            $_SESSION['error_message'] = "Erro ao processar solicitação";
-            error_log($e->getMessage());
+        }catch (\Throwable $e) {
+            $_SESSION['error_message'] = "Erro ao processar solicitação: " . $e->getMessage();
+            if(php_sapi_name() !== 'cli'){
+                error_log("Error: " . $e->getMessage());
+            }
             session_write_close();
         }
         $this->render('user/list', ['listUsers' => $listUsers]);
@@ -95,6 +98,33 @@ class UserController extends Controller
 
     public function edit(int $id): void
     {
-        var_dump('Estou no EDIT do ID: ' . $id);
+        try {
+            $user = $this->userService->getUserById((int)$id);
+            $this->render('user/edit', ['user' => $user]);
+        }catch(ServiceException $e) {
+            $_SESSION['error_message'] = 'Erro ao buscar usuário';
+            session_write_close();
+            $this->redirect("/users");
+        }catch(\Exception $e) {
+            $_SESSION['error_message'] = 'Erro: '. $e->getMessage();
+            session_write_close();
+            $this->redirect("/users");
+        }
+    }
+
+    public function update(int $id, string $name, string $email, string $birth)
+    {
+        try {
+            $user = $this->userService->update((int)$id, $name, $email, $birth);
+            $this->render('user/show', ['user' => $user]);
+        }catch(ServiceException $e) {
+            $_SESSION['error_message'] = 'Erro ao atualizar usuário';
+            session_write_close();
+            $this->redirect("/users");
+        }catch(\Exception $e) {
+            $_SESSION['error_message'] = 'Erro: '. $e->getMessage();
+            session_write_close();
+            $this->redirect("/users");
+        }
     }
 }

@@ -30,6 +30,13 @@ class User
         return $user;
     }
 
+    public static function updateWithoutPasswordHash(int $id, string $name, string $email, string $birth)
+    {
+        $user = new self($name, $email, $birth, null);
+        $user->id = $id;
+        return $user;
+    }
+
     public function getId(): int
     {
         return $this->id;
@@ -66,6 +73,16 @@ class User
 
     private function setBirth($birth)
     {
+        try{
+            $givenBirth = new \Datetime($birth);
+        }catch(\Exception $e) {
+            throw new \DomainException('Data de nascimento inválida');
+        }
+        
+        $today = new \Datetime();
+        if($givenBirth > $today) {
+            throw new \DomainException('Data de nascimento inválida');
+        }
         list($year, $month, $day) = explode('-', $birth);
         if(!checkdate($month, $day, $year)) {
             throw new \DomainException('Data de nascimento inválida');

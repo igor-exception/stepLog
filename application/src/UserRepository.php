@@ -66,5 +66,30 @@ class UserRepository implements UserRepositoryInterface
             throw new RepositoryException("Erro no banco.", 0, $e);
         }
     }
+
+    public function update(User $user): ?User
+    {
+        try {
+            $userId = $user->getId();
+            $name = $user->getName();
+            $email = $user->getEmail();
+            $birth = $user->getBirth();
+
+            $stmt = $this->pdo->prepare("UPDATE users SET name = :name, email = :email, birth = :birth WHERE user_id = :user_id;");
+            $stmt->execute([
+                'user_id' => $userId,
+                'name' => $name,
+                'email' => $email,
+                'birth' => $birth
+            ]);
+
+            if($stmt->rowCount() <= 0) {
+                return false;
+            }
+            return $this->findById($userId);
+        }catch(\PDOException $e) {
+            throw new RepositoryException("Erro no banco.", 0, $e);
+        }
+    }
     
 }

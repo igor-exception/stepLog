@@ -29,7 +29,7 @@ class UserService
         try {
             return $this->userRepository->findAll();
         }catch (RepositoryException $e) {
-            throw new ServiceException("Erro ao consultar usuário: ". $e->getMessage(), 0, $e);
+            throw new ServiceException("Erro ao consultar usuário", 0, $e);
         }
     }
 
@@ -43,6 +43,20 @@ class UserService
             return $user;
         }catch (RepositoryException $e) {
             throw new ServiceException("Erro ao consultar usuário pelo ID: ". $e->getMessage(), 0, $e);
+        }
+    }
+
+    public function update(int $id, string $name, string $email, string $birth): ?User
+    {
+        try{
+            $userUpdate = User::updateWithoutPasswordHash($id, $name, $email, $birth);
+            $user = $this->userRepository->update($userUpdate);
+            if(!$user) {
+                throw new ServiceException('Erro ao atualizar usuário', 0);
+            }
+            return $user;
+        }catch (RepositoryException $e) {
+            throw new ServiceException("Erro ao atualizar usuário:". $e->getMessage(), 0, $e);
         }
     }
 }

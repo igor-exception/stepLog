@@ -9,8 +9,28 @@ require_once 'routes.php';
 use APP\Helpers\RouterHelper;
 use APP\Router;
 
+
 $requestUri = $_SERVER['REQUEST_URI'] ?? '/';
-$requestMethod = $_SERVER['REQUEST_METHOD'] ?? 'GET';
+$requestMethod = 'GET';
+
+if($_SERVER['REQUEST_METHOD'] == 'POST'){
+    if(isset($_POST['_method'])) {
+        $method = strtoupper($_POST['_method']);
+        if($method === "POST") {
+            $requestMethod = "POST";
+        }else if($method === "PUT") {
+            $requestMethod = "PUT";
+        }else if($method === "PATCH") {
+            $requestMethod = "PATCH";
+        }else if($method === "DELETE") {
+            $requestMethod = "DELETE";
+        }else{
+            http_response_code(404);
+            echo "Método inválido";
+            exit();
+        }
+    }
+}
 
 // instancia Router, passando array $routes, que vem do arquivo: routes.php
 $router = new Router($routes);
@@ -48,7 +68,6 @@ if(!empty($params)){
 }else{
     $controller->$action();
 }
-
 
 
 ?>

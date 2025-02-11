@@ -19,7 +19,11 @@
                 <td><?= $user->getName()?></td>
                 <td><?= $user->getEmail()?></td>
                 <td><?= $user->getBirth()?></td>
-                <td><a href="/users/<?= $user->getId();?>">Ver</a> Editar Remover</td>
+                <td>
+                    <a href="/users/<?= $user->getId();?>">Ver</a> 
+                    <a href="/users/<?= $user->getId();?>/edit">Editar</a> 
+                    <a href="#">Remover</a>
+                </td>
             </tr>
         <?php } ?>
     <?php }else{ ?>

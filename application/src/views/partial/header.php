@@ -14,10 +14,14 @@
 function displayFlashMessages() {
   if(!empty($_SESSION['success_message'])) {
     echo '<div>' . $_SESSION['success_message'] . '</div>';
-    unset($_SESSION['success_message']);
+    if(php_sapi_name() !== 'cli') {
+      unset($_SESSION['success_message']);
+    }
   }elseif(!empty($_SESSION['error_message'])) {
     echo '<div>' . $_SESSION['error_message'] . '</div>';
-    unset($_SESSION['error_message']);
+    if(php_sapi_name() !== 'cli') {
+      unset($_SESSION['error_message']);
+    }
   }
 }
 

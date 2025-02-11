@@ -24,6 +24,7 @@ class Router
     {
         $allRoutes = $this->endPoints;
         $endPoints = $allRoutes[$method];
+
         if(isset($endPoints[$request])){
             return $request;
         }
