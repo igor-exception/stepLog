@@ -22,7 +22,6 @@ class UserController extends Controller
 
     public function index(): void
     {
-        // problema no teste, nao esta identificando a sessao['error_message'] no controller
         $listUsers = [];
         try{
             $listUsers = $this->userService->getAllUsers();

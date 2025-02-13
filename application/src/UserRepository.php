@@ -57,7 +57,7 @@ class UserRepository implements UserRepositoryInterface
             $stmt->execute(['user_id' => $id]);
             $userData = $stmt->fetch(\PDO::FETCH_ASSOC);
             if(!$userData) {
-                throw new RepositoryException("Não foi possível encontrar usuário", 0, $e);
+                throw new RepositoryException("Não foi possível encontrar usuário");
             }
             
             $user = User::hydrateWithoutPasswordHash((int)$userData['user_id'], $userData['name'], $userData['email'], $userData['birth']);
@@ -84,8 +84,9 @@ class UserRepository implements UserRepositoryInterface
             ]);
 
             if($stmt->rowCount() <= 0) {
-                return false;
+                return null;
             }
+
             return $this->findById($userId);
         }catch(\PDOException $e) {
             throw new RepositoryException("Erro no banco.", 0, $e);

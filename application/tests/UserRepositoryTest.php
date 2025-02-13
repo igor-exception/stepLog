@@ -124,4 +124,168 @@ class UserRepositoryTest extends TestCase
         $userRepository->findAll();
         
     }
+
+    public function testFindById()
+    {
+        $user = User::hydrateWithoutPasswordHash(1, 'John Doe', 'john@gmail.com', '1990-01-01');
+
+        $mockStatement = $this->createMock(PDOStatement::class);
+        $mockStatement->expects($this->once())
+            ->method('fetch')
+            ->with(\PDO::FETCH_ASSOC)
+            ->willReturn(['user_id' => 1, 'name' => 'John Doe', 'email' => 'john@gmail.com', 'birth' => '1990-01-01']);
+        $mockStatement->expects($this->once())
+            ->method('execute')
+            ->with(['user_id' => 1]);
+        $mockPdo = $this->createMock(PDO::class);
+        $mockPdo->method('prepare')
+            ->with("SELECT user_id, name, email, birth FROM users WHERE user_id = :user_id")
+            ->willReturn($mockStatement);
+        
+        $userRepository = new UserRepository($mockPdo);
+        $ReturnedUser = $userRepository->findById(1);
+        $this->assertEquals($user, $ReturnedUser);
+    }
+
+    public function testFindByIdThrowException()
+    {
+        $user = User::hydrateWithoutPasswordHash(1, 'John Doe', 'john@gmail.com', '1990-01-01');
+
+        $mockStatement = $this->createMock(PDOStatement::class);
+        $mockStatement->expects($this->once())
+            ->method('fetch')
+            ->with(\PDO::FETCH_ASSOC)
+            ->willReturn(null);
+        
+        $mockStatement->expects($this->once())
+            ->method('execute')
+            ->with(['user_id' => 1]);
+        $mockPdo = $this->createMock(PDO::class);
+        $mockPdo->method('prepare')
+            ->with("SELECT user_id, name, email, birth FROM users WHERE user_id = :user_id")
+            ->willReturn($mockStatement);
+        
+        $this->expectException(RepositoryException::class);
+        $this->expectExceptionMessage("Não foi possível encontrar usuário");
+
+        $userRepository = new UserRepository($mockPdo);
+        $ReturnedUser = $userRepository->findById(1);
+    }
+
+    public function testFindByIdPdoException()
+    {
+        $user = User::hydrateWithoutPasswordHash(1, 'John Doe', 'john@gmail.com', '1990-01-01');
+
+        $mockStatement = $this->createMock(PDOStatement::class);
+        $mockStatement->expects($this->once())
+            ->method('fetch')
+            ->with(\PDO::FETCH_ASSOC)
+            ->willThrowException(new PDOException());
+        
+        $mockStatement->expects($this->once())
+            ->method('execute')
+            ->with(['user_id' => 1]);
+        $mockPdo = $this->createMock(PDO::class);
+        $mockPdo->method('prepare')
+            ->with("SELECT user_id, name, email, birth FROM users WHERE user_id = :user_id")
+            ->willReturn($mockStatement);
+        
+        $this->expectException(RepositoryException::class);
+        $this->expectExceptionMessage("Erro no banco");
+
+        $userRepository = new UserRepository($mockPdo);
+        $ReturnedUser = $userRepository->findById(1);
+    }
+
+    public function testUpdate()
+    {
+        $userId = 1;
+        $userName = 'John Doe';
+        $userEmail = 'john@gmail.com';
+        $userBirth = '1990-01-01';
+        $user = User::hydrateWithoutPasswordHash($userId, $userName, $userEmail, $userBirth);
+        
+        $mockStatement = $this->createMock(PDOStatement::class);
+
+        $mockStatement->expects($this->once())
+            ->method('execute')
+            ->with([
+                'user_id' => $userId,
+                'name' => $userName,
+                'email' => $userEmail,
+                'birth' => $userBirth
+            ]);
+
+        $mockStatement->expects($this->once())
+            ->method('rowCount')
+            ->willReturn(1);
+
+        $mockPdo = $this->createMock(PDO::class);
+        $mockPdo->expects($this->once())
+            ->method('prepare')
+            ->with("UPDATE users SET name = :name, email = :email, birth = :birth WHERE user_id = :user_id;")
+            ->willReturn($mockStatement);
+        
+        
+        $controller = $this->getMockBuilder(UserRepository::class)
+                            ->setConstructorArgs([$mockPdo])
+                            ->onlyMethods(['findById'])
+                            ->getMock();
+        
+        $controller->expects($this->once())
+                ->method('findById')
+                ->with($userId)
+                ->willReturn($user);
+        
+        
+        $ReturnedUser = $controller->update($user);
+
+        $this->assertEquals($user, $ReturnedUser);
+    }
+
+    public function testUpdatePdoException()
+    {
+        $this->expectException(RepositoryException::class);
+        $this->expectExceptionMessage("Erro no banco");
+        $userId = 1;
+        $userName = 'John Doe';
+        $userEmail = 'john@gmail.com';
+        $userBirth = '1990-01-01';
+        $user = User::hydrateWithoutPasswordHash($userId, $userName, $userEmail, $userBirth);
+        
+        $mockStatement = $this->createMock(PDOStatement::class);
+
+        $mockStatement->expects($this->never())
+            ->method('execute')
+            ->with([
+                'user_id' => $userId,
+                'name' => $userName,
+                'email' => $userEmail,
+                'birth' => $userBirth
+            ]);
+
+        $mockStatement->expects($this->never())
+            ->method('rowCount')
+            ->willReturn(1);
+
+        $mockPdo = $this->createMock(PDO::class);
+        $mockPdo->expects($this->once())
+            ->method('prepare')
+            ->with("UPDATE users SET name = :name, email = :email, birth = :birth WHERE user_id = :user_id;")
+            ->willThrowException(new \PDOException);
+        
+        
+        $controller = $this->getMockBuilder(UserRepository::class)
+                            ->setConstructorArgs([$mockPdo])
+                            ->onlyMethods(['findById'])
+                            ->getMock();
+        
+        $controller->expects($this->never())
+                ->method('findById')
+                ->with($userId)
+                ->willReturn($user);
+        
+        
+        $ReturnedUser = $controller->update($user);
+    }
 }

@@ -91,4 +91,95 @@ class UserServiceTest extends TestCase
         $userService = new UserService($mockRepository);
         $usersListData = $userService->getAllUsers();
     }
+
+    public function testGetUserById()
+    {
+        $user = User::hydrateWithoutPasswordHash(1, 'John Doe', 'john@gmail.com', '1960-01-01');
+        $mockRepository = $this->createMock(UserRepository::class);
+        $mockRepository->expects($this->once())
+            ->method('findById')
+            ->willReturn($user);
+        
+        $userService = new UserService($mockRepository);
+        $usersData = $userService->getUserById(1);
+        $this->assertEquals($user, $usersData);
+    }
+
+    public function testGetUserByIdException()
+    {
+        $this->expectException(ServiceException::class);
+        $this->expectExceptionMessage("Usuário não encontrado");
+
+        $user = User::hydrateWithoutPasswordHash(1, 'John Doe', 'john@gmail.com', '1960-01-01');
+        
+        $mockRepository = $this->createMock(UserRepository::class);
+        $mockRepository->expects($this->once())
+            ->method('findById')
+            ->with(1)
+            ->willReturn(null);
+        $userService = new UserService($mockRepository);
+        $usersListData = $userService->getUserById(1);
+    }
+
+    public function testGetUserByIdRepositoryException()
+    {
+        $this->expectException(ServiceException::class);
+        $this->expectExceptionMessage("Erro ao consultar usuário pelo ID:");
+
+        $user = User::hydrateWithoutPasswordHash(1, 'John Doe', 'john@gmail.com', '1960-01-01');
+        
+        $mockRepository = $this->createMock(UserRepository::class);
+        $mockRepository->expects($this->once())
+            ->method('findById')
+            ->with(1)
+            ->willThrowException(new RepositoryException("Erro no banco"));
+        $userService = new UserService($mockRepository);
+        $usersListData = $userService->getUserById(1);
+    }
+
+    public function testUpdate()
+    {
+        $updatedUser = User::hydrateWithoutPasswordHash(1, 'John Doe da silva', 'john@gmail.com', '1960-01-01');
+        $mockRepository = $this->createMock(UserRepository::class);
+        $mockRepository->expects($this->once())
+            ->method('update')
+            ->with($updatedUser)
+            ->willReturn($updatedUser);
+        
+        $userService = new UserService($mockRepository);
+        $usersData = $userService->update(1, 'John Doe da silva', 'john@gmail.com', '1960-01-01');
+        $this->assertEquals($updatedUser, $usersData);
+    }
+
+    public function testUpdateUserException()
+    {
+        $this->expectException(ServiceException::class);
+        $this->expectExceptionMessage("Erro ao atualizar usuário");
+
+        $user = User::hydrateWithoutPasswordHash(1, 'John Doe da silva', 'john@gmail.com', '1960-01-01');
+        
+        $mockRepository = $this->createMock(UserRepository::class);
+        $mockRepository->expects($this->once())
+            ->method('update')
+            ->with($user)
+            ->willReturn(null);
+        $userService = new UserService($mockRepository);
+        $usersListData = $userService->update(1, 'John Doe da silva', 'john@gmail.com', '1960-01-01');
+    }
+
+    public function testUpdateRepositoryException()
+    {
+        $this->expectException(ServiceException::class);
+        $this->expectExceptionMessage("Erro ao atualizar usuário:");
+
+        $user = User::hydrateWithoutPasswordHash(1, 'John Doe da silva', 'john@gmail.com', '1960-01-01');
+        
+        $mockRepository = $this->createMock(UserRepository::class);
+        $mockRepository->expects($this->once())
+            ->method('update')
+            ->with($user)
+            ->willThrowException(new RepositoryException("Erro no banco."));
+        $userService = new UserService($mockRepository);
+        $usersListData = $userService->update(1, 'John Doe da silva', 'john@gmail.com', '1960-01-01');
+    }
 }
